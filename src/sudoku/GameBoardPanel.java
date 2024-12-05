@@ -108,7 +108,7 @@ public class GameBoardPanel extends JPanel {
                 AudioPlayer.playSound("tuting.wav");
             } else {
                 sourceCell.status = CellStatus.WRONG_GUESS;
-                AudioPlayer.playSound("inputsalah.wav");
+                AudioPlayer.playSound2("inputsalah.wav");
             }
             sourceCell.paint();
 

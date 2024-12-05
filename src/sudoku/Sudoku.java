@@ -186,4 +186,47 @@ public class Sudoku extends JFrame {
         btnPauseTimer.setEnabled(true);
         btnResumeTimer.setEnabled(false);
     }
+
+    // Method to handle when the game is won
+    private void showWinPopup(int currentLevel) {
+        String message = "Congratulations! You won the game.";
+        String[] options = {"Next Level", "Back to Menu"};
+
+        int option = JOptionPane.showOptionDialog(this,
+                message,
+                "Game Won!",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        if (option == 0) {
+            // Next Level
+            int nextLevel = currentLevel + 1;
+            if (nextLevel > 10) {
+                nextLevel = 1;  // Loop back to level 1 if max level is reached
+            }
+            dispose();  // Close the current game window
+            Sudoku nextGame = new Sudoku(nextLevel);  // Start the next level
+            JFrame nextGameFrame = new JFrame("Sudoku Game");
+            nextGameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            nextGameFrame.add(nextGame);
+            nextGameFrame.pack();
+            nextGameFrame.setLocationRelativeTo(null);
+            nextGameFrame.setVisible(true);
+        } else if (option == 1) {
+            // Back to Menu
+            dispose();  // Close the current game window
+            ScreenAwal sa = new ScreenAwal();
+            sa.setVisible(true);  // Show the home screen
+        }
+    }
+
+    // Assuming this method is called when the player wins
+    private void checkGameWon() {
+        if (board.isSolved()) {  // `board.isSolved()` is a placeholder for the actual method to check if the game is won
+        }
+    }
+
 }

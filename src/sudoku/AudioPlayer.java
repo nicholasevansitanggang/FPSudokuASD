@@ -18,7 +18,7 @@ public class AudioPlayer {
             clip = AudioSystem.getClip();  // Simpan clip yang sedang diputar
             clip.open(audio);
             clip.start();
-            Thread.sleep(Duration.ofMillis(1000).toMillis());  // Durasi suara bisa diubah
+            Thread.sleep(Duration.ofMillis(200).toMillis());  // Durasi suara bisa diubah
             clip.stop();
             clip.close();
         } catch (Exception e) {
@@ -48,7 +48,7 @@ public class AudioPlayer {
             clip = AudioSystem.getClip();  // Simpan clip yang sedang diputar
             clip.open(audio);
             clip.start();
-            Thread.sleep(Duration.ofMillis(5000).toMillis());  // Durasi suara bisa diubah
+            Thread.sleep(Duration.ofMillis(700).toMillis());  // Durasi suara bisa diubah
             clip.stop();
             clip.close();
         } catch (Exception e) {
