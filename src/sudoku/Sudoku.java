@@ -156,9 +156,4 @@ public class Sudoku extends JFrame {
         btnPauseTimer.setEnabled(true);
         btnResumeTimer.setEnabled(false);
     }
-
-    public static void main(String[] args) {
-        // Sample starting difficulty level
-        new Sudoku(2); //Easy
-    }
 }
