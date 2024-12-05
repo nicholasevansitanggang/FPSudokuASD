@@ -7,6 +7,7 @@ public class Main {
         //  the constructor of "SudokuMain"
         // .........
         ScreenAwal awal = new ScreenAwal();
+
         awal.setVisible(true);
     }
 }

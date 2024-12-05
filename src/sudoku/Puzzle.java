@@ -175,12 +175,21 @@ public class Puzzle {
 
     // Check if it's safe to place a number in a cell
     private boolean isSafeToPlace(int row, int col, int num) {
+        // Check row
         for (int x = 0; x < SudokuConstants.GRID_SIZE; x++) {
-            if (numbers[row][x] == num || numbers[x][col] == num) {
+            if (numbers[row][x] == num) {
                 return false;
             }
         }
 
+        // Check column
+        for (int x = 0; x < SudokuConstants.GRID_SIZE; x++) {
+            if (numbers[x][col] == num) {
+                return false;
+            }
+        }
+
+        // Check 3x3 subgrid
         int startRow = row - row % 3;
         int startCol = col - col % 3;
         for (int i = 0; i < 3; i++) {
@@ -193,4 +202,5 @@ public class Puzzle {
 
         return true;
     }
+
 }

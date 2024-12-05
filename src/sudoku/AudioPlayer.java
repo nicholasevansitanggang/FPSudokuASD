@@ -10,14 +10,15 @@ import java.time.Duration;
 public class AudioPlayer {
     private static Clip clip;
 
-    public static void playSound(String soundFile) {//backsound properti kena ular,tangga,dll
+    // Method untuk memutar suara dengan durasi pendek
+    public static void playSound(String soundFile) {
         try {
             InputStream audioLink = AudioPlayer.class.getResourceAsStream("/" + soundFile);
             AudioInputStream audio = AudioSystem.getAudioInputStream(audioLink);
-            Clip clip = AudioSystem.getClip();
+            clip = AudioSystem.getClip();  // Simpan clip yang sedang diputar
             clip.open(audio);
             clip.start();
-            Thread.sleep(Duration.ofMillis(1000));//durasi suara bisa diubah
+            Thread.sleep(Duration.ofMillis(1000).toMillis());  // Durasi suara bisa diubah
             clip.stop();
             clip.close();
         } catch (Exception e) {
@@ -25,30 +26,41 @@ public class AudioPlayer {
         }
     }
 
-    public static void playbackSound(String soundFile) {//backsound permainan sampe selesai
+    // Method untuk memutar suara yang berulang terus menerus
+    public static void playbackSound(String soundFile) {
         try {
             InputStream audioLink = AudioPlayer.class.getResourceAsStream("/" + soundFile);
             AudioInputStream audio = AudioSystem.getAudioInputStream(audioLink);
-            Clip clip = AudioSystem.getClip();
+            clip = AudioSystem.getClip();  // Simpan clip yang sedang diputar
             clip.open(audio);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);  // Suara berulang terus menerus
             clip.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public static void playSound2(String soundFile) {//backsound properti kena ular,tangga,dll
+
+    // Method untuk memutar suara dengan durasi tertentu (contoh 5 detik)
+    public static void playSound2(String soundFile) {
         try {
             InputStream audioLink = AudioPlayer.class.getResourceAsStream("/" + soundFile);
             AudioInputStream audio = AudioSystem.getAudioInputStream(audioLink);
-            Clip clip = AudioSystem.getClip();
+            clip = AudioSystem.getClip();  // Simpan clip yang sedang diputar
             clip.open(audio);
             clip.start();
-            Thread.sleep(Duration.ofMillis(5000));//durasi suara bisa diubah
+            Thread.sleep(Duration.ofMillis(5000).toMillis());  // Durasi suara bisa diubah
             clip.stop();
             clip.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // Method untuk menghentikan suara yang sedang diputar
+    public static void stopSound() {
+        if (clip != null && clip.isRunning()) {
+            clip.stop();
+            clip.close();
         }
     }
 }

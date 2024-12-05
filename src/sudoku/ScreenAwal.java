@@ -37,7 +37,7 @@ public class ScreenAwal extends JFrame {
         welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Difficulty ComboBox
-        String[] difficulties = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6", "Level 7", "Level 8", "Level 9", "Level 10"};
+        String [] difficulties = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6", "Level 7", "Level 8", "Level 9", "Level 10"};
         difficultyComboBox = new JComboBox<>(difficulties);
         difficultyComboBox.setFont(new Font("Arial", Font.PLAIN, 16));
         difficultyComboBox.setMaximumSize(new Dimension(200, 30));
@@ -55,7 +55,7 @@ public class ScreenAwal extends JFrame {
                 int difficultyLevel = getDifficultyLevel(difficulty);
 
                 setVisible(false);
-                GameBoardPanel gameBoard = new GameBoardPanel(difficultyLevel);
+                Sudoku gameBoard = new Sudoku(difficultyLevel);
                 JFrame gameFrame = new JFrame("Sudoku Game");
                 gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 gameFrame.add(gameBoard);

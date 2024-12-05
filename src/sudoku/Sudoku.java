@@ -10,8 +10,9 @@ public class Sudoku extends JFrame {
 
     // Private variables
     private final GameBoardPanel board;
-    private final JButton btnRestartGame = new JButton("Restart Game");
+    private final JButton btnRestartGame = new JButton("Back to Menu");
     private final JLabel timerLabel = new JLabel("Time: 0 seconds", JLabel.CENTER);  // Label to show timer
+    private final JLabel levelLabel = new JLabel("Level: Easy", JLabel.CENTER);  // Label to show level
     private final Timer gameTimer;
     private int elapsedTime = 0;  // Elapsed time in seconds
     private boolean isPaused = false;  // To track if timer is paused
@@ -23,33 +24,41 @@ public class Sudoku extends JFrame {
 
     // Constructor modified to accept difficulty level
     public Sudoku(int difficultyLevel) {
-        // Initialize GameBoardPanel with difficultyLevel
+        // Inisialisasi board dengan difficultyLevel
         board = new GameBoardPanel(difficultyLevel);
 
-        // Set up the container with BorderLayout
+        // Set up layout utama dengan BorderLayout
         Container cp = getContentPane();
-        cp.setLayout(new BorderLayout());  // Layout untuk menempatkan komponen di dalam frame
+        cp.setLayout(new BorderLayout());  // Menggunakan BorderLayout untuk menempatkan komponen
 
-        // Add the game board to the center of the layout
+        // Add the game board to the center
         cp.add(board, BorderLayout.CENTER);
 
-        // Create a panel for the timer and buttons
+        // Panel untuk Timer dan Level (Upper area)
         JPanel topPanel = new JPanel();
-        topPanel.setLayout(new BorderLayout());
+        topPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        // Set up the timer label (Top of the frame)
+        // Set up timer label (tampilkan waktu) dan level label
         timerLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-        topPanel.add(timerLabel, BorderLayout.CENTER);
+        levelLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
-        // Add the top panel with timer label to the NORTH of the main frame
-        cp.add(topPanel, BorderLayout.NORTH);
+        topPanel.add(timerLabel);
+        topPanel.add(levelLabel);  // Menambahkan level label ke topPanel
+        cp.add(topPanel, BorderLayout.NORTH);  // Panel timer dan level ditempatkan di atas frame
 
-        // Panel untuk tombol kontrol timer
-        JPanel timerControlsPanel = new JPanel();
-        timerControlsPanel.setLayout(new FlowLayout());
+        // Panel untuk kontrol timer (Pause, Resume, Reset) dan Restart button (Bottom area)
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout());  // Mengatur tombol kontrol timer dalam layout FlowLayout
 
-        // Pause button action
-        btnPauseTimer.setFont(new Font("Arial", Font.PLAIN, 16));
+        // Add the timer control buttons (Pause, Resume, Reset)
+        bottomPanel.add(btnPauseTimer);   // Menambahkan tombol Pause
+        bottomPanel.add(btnResumeTimer);  // Menambahkan tombol Resume
+        bottomPanel.add(btnResetTimer);   // Menambahkan tombol Reset
+        bottomPanel.add(btnRestartGame);  // Menambahkan tombol Restart Game
+
+        cp.add(bottomPanel, BorderLayout.SOUTH);  // Menambahkan panel kontrol timer dan tombol restart ke SOUTH
+
+        // Set up button actions for controlling the timer
         btnPauseTimer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -57,8 +66,6 @@ public class Sudoku extends JFrame {
             }
         });
 
-        // Resume button action
-        btnResumeTimer.setFont(new Font("Arial", Font.PLAIN, 16));
         btnResumeTimer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -66,8 +73,6 @@ public class Sudoku extends JFrame {
             }
         });
 
-        // Reset button action
-        btnResetTimer.setFont(new Font("Arial", Font.PLAIN, 16));
         btnResetTimer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -75,77 +80,102 @@ public class Sudoku extends JFrame {
             }
         });
 
-        // Add the buttons for controlling the timer
-        timerControlsPanel.add(btnPauseTimer);
-        timerControlsPanel.add(btnResumeTimer);
-        timerControlsPanel.add(btnResetTimer);
-
-        // Add timer controls panel to the top of the frame
-        cp.add(timerControlsPanel, BorderLayout.NORTH);
-
-        // Create a panel for buttons (FlowLayout will make it easier to center the buttons)
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));  // Using BoxLayout for vertical arrangement
-        bottomPanel.setPreferredSize(new Dimension(100, 30));  // Make sure the panel is big enough
-
-        // Set up the Restart Game button
-        btnRestartGame.setFont(new Font("Arial", Font.PLAIN, 16));
-        btnRestartGame.setPreferredSize(new Dimension(100, 30));  // Set button size
+        // Tombol restart game yang memperbaiki freeze
         btnRestartGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Dispose the current frame and return to ScreenAwal
-                dispose();  // Close the current Sudoku frame
-                ScreenAwal awal = new ScreenAwal();  // Create a new instance of ScreenAwal
-                awal.setVisible(true);  // Show the ScreenAwal frame
+                // Hentikan timer sebelum memulai game ulang
+                gameTimer.stop();
+                dispose();
+                AudioPlayer.stopSound();
+                ScreenAwal sa = new ScreenAwal();
+                sa.setVisible(true);
+
+                // Reset timer dan mulai timer dari 0
+                resetTimer();  // Reset timer
+                gameTimer.start();  // Mulai kembali timer setelah game dimulai ulang
             }
         });
 
-        // Add the Restart Game button to the bottom panel
-        bottomPanel.add(btnRestartGame, BorderLayout.CENTER);  // Button at the center of the bottom panel
-
-        // Add the bottom panel with the button to the SOUTH of the main frame
-        cp.add(bottomPanel, BorderLayout.SOUTH);  // Panel at the bottom
-
-        // Initialize the game board to start the game with the given difficulty
-        board.newGame(difficultyLevel);
-
-        // Timer setup
-        gameTimer = new Timer(1000, new ActionListener() {  // Timer fires every second
+        // Inisialisasi dan mulai timer
+        gameTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!isPaused) {
-                    elapsedTime++;  // Increment elapsed time every second
+                    elapsedTime++;
                     timerLabel.setText("Time: " + elapsedTime + " seconds");
                 }
             }
         });
-        gameTimer.start();  // Start the timer immediately
+        gameTimer.start();  // Memulai timer saat game dimulai
 
-        // Ensure proper re-layout and rendering
+        // Set the level label according to the difficulty level
+        setLevelLabel(difficultyLevel);
+
+        // Revalidate dan repaint frame
         cp.revalidate();
         cp.repaint();
 
-        // Make sure the frame size is adjusted and set to visible
-        pack();  // Adjust the frame size to fit all components
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // To close the application when the frame is closed
+        // Pengaturan ukuran frame
+        pack();  // Sesuaikan ukuran window berdasarkan komponen
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Sudoku");
-        setSize(600, 600);  // Set an appropriate window size
-        setVisible(true);  // Make sure the frame is visible
+        setSize(600, 600);
+        setVisible(true);
+    }
+
+    // Method to set the level label based on difficulty
+    public void setLevelLabel(int difficultyLevel) {
+        String levelText = "Level: ";
+        switch (difficultyLevel) {
+            case 4:
+                levelText = levelText + "1";
+                break;
+            case 8:
+                levelText = levelText + "2";
+                break;
+            case 12:
+                levelText = levelText + "3";
+                break;
+            case 15:
+                levelText = levelText + "4";
+                break;
+            case 18:
+                levelText = levelText + "5";
+                break;
+            case 21:
+                levelText = levelText + "6";
+                break;
+            case 24:
+                levelText = levelText + "7";
+                break;
+            case 27:
+                levelText = levelText + "8";
+                break;
+            case 30:
+                levelText = levelText + "9";
+                break;
+            case 35:
+                levelText = levelText + "10";
+                break;
+            default:
+                System.out.println("default");
+        }
+        levelLabel.setText(levelText);
     }
 
     // Method to pause the timer
     public void pauseTimer() {
         isPaused = true;
-        btnPauseTimer.setEnabled(false);  // Disable Pause button when the timer is paused
+        btnPauseTimer.setEnabled(false);  // Disable Pause button
         btnResumeTimer.setEnabled(true);  // Enable Resume button
     }
 
     // Method to resume the timer
     public void resumeTimer() {
         isPaused = false;
-        btnPauseTimer.setEnabled(true);  // Enable Pause button when the timer is resumed
-        btnResumeTimer.setEnabled(false);  // Disable Resume button
+        btnPauseTimer.setEnabled(true);   // Enable Pause button
+        btnResumeTimer.setEnabled(false); // Disable Resume button
     }
 
     // Method to reset the timer
