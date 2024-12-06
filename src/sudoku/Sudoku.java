@@ -25,8 +25,7 @@ public class Sudoku extends JFrame {
     private final JButton btnResetTimer = new JButton("Reset Timer");
 
     // Variabel untuk menghitung kotak kosong
-    private int remainingCells = SudokuConstants.GRID_SIZE * SudokuConstants.GRID_SIZE;
-    private JLabel remainingCellsLabel = new JLabel("Remaining: " + remainingCells, JLabel.CENTER);  // Label to show remaining cells
+
 
     // Constructor modified to accept difficulty level and player name
     public Sudoku(int difficultyLevel, String playerName) {
@@ -54,9 +53,6 @@ public class Sudoku extends JFrame {
         timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         topPanel.add(timerLabel);
 
-        // Add the remaining cells label
-        remainingCellsLabel.setFont(new Font("SciFi", Font.PLAIN, 18));
-        topPanel.add(remainingCellsLabel);  // Menambahkan label remaining cells ke topPanel
 
         cp.add(topPanel, BorderLayout.NORTH);  // Panel timer dan level ditempatkan di atas frame
 
@@ -84,7 +80,6 @@ public class Sudoku extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                AudioPlayer.stopSound();
                 dispose();
                 AudioPlayer.stopSound();
                 ScreenAwal baru = new ScreenAwal();
@@ -209,5 +204,19 @@ public class Sudoku extends JFrame {
     private void checkGameWon() {
         if (board.isSolved()) {  // `board.isSolved()` is a placeholder for the actual method to check if the game is won
         }
+    }
+    public void returnMenu(boolean b){
+        btnRestartGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dispose();
+                AudioPlayer.stopSound();
+                ScreenAwal baru = new ScreenAwal();
+                AudioPlayer.stopSound();
+                baru.setVisible(true);
+                pack();
+            }
+        });
     }
 }

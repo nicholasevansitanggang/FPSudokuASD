@@ -94,4 +94,7 @@ public class AudioPlayer {
             clip.close();
         }
     }
+    public static boolean isAudioPlaying() {
+        return clip != null && clip.isRunning();
+    }
 }

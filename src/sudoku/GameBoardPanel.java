@@ -155,7 +155,7 @@ public class GameBoardPanel extends JPanel {
                         hintGiven = true;
 
                         // Suara hint
-                        AudioPlayer.playSound("hint_sound.wav");  // Ganti dengan suara hint yang sesuai
+                        AudioPlayer.playSound("tuting.wav");  // Ganti dengan suara hint yang sesuai
 
                         break;
                     }
@@ -181,6 +181,7 @@ public class GameBoardPanel extends JPanel {
             }
 
         } else {
+            AudioPlayer.stopSound();
             JOptionPane.showMessageDialog(this, "No more hints left!", "Hint Limit Reached", JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -208,6 +209,7 @@ public class GameBoardPanel extends JPanel {
                 } else {
                     sourceCell.status = CellStatus.WRONG_GUESS;
                     AudioPlayer.playSound2("inputsalah.wav");
+                    sourceCell.setText(""); // Clear the text if it's invalid input
                 }
 
                 sourceCell.paint();

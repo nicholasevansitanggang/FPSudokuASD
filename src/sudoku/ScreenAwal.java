@@ -20,7 +20,9 @@ public class ScreenAwal extends JFrame {
     private JTextField playerNameField;  // Field untuk input nama pemain
 
     public ScreenAwal() {
-        AudioPlayer.playbackSound("game_backsound.wav", 0.65f);
+        if (!AudioPlayer.isAudioPlaying()) {
+            AudioPlayer.playbackSound("game_backsound.wav", 0.65f);
+        }
         setTitle("Sudoku Game");
 
         // Initialize the layered pane
