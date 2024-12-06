@@ -177,6 +177,7 @@ public class GameBoardPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Congratulations! You've solved the puzzle!",
                         "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
                 AudioPlayer.stopSound();
+
             }
 
         } else {
