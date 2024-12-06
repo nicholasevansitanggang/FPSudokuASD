@@ -52,9 +52,9 @@ public class ScreenAwal extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER; // Menjaga semua elemen tetap di tengah
 
         playerNameField = new JTextField("Enter Player Name...");  // Placeholder text
-        playerNameField.setFont(new Font("SciFi", Font.PLAIN, 18)); // Gunakan font SciFi
+        playerNameField.setFont(new Font("SciFi", Font.PLAIN, 18));
         playerNameField.setPreferredSize(new Dimension(250, 40)); // Ukuran lebih besar untuk input nama
-        playerNameField.setForeground(Color.GRAY);  // Warna teks placeholder (abu-abu)
+        playerNameField.setForeground(Color.GRAY);
 
         // Listener untuk menghapus placeholder ketika pengguna mulai mengetik
         playerNameField.addFocusListener(new FocusAdapter() {
@@ -62,7 +62,7 @@ public class ScreenAwal extends JFrame {
             public void focusGained(FocusEvent e) {
                 if (playerNameField.getText().equals("Enter Player Name...")) {
                     playerNameField.setText("");
-                    playerNameField.setForeground(Color.BLACK);  // Mengubah warna teks menjadi hitam
+                    playerNameField.setForeground(Color.BLACK);
                 }
             }
 
@@ -70,7 +70,7 @@ public class ScreenAwal extends JFrame {
             public void focusLost(FocusEvent e) {
                 if (playerNameField.getText().isEmpty()) {
                     playerNameField.setText("Enter Player Name...");
-                    playerNameField.setForeground(Color.GRAY);  // Warna teks kembali abu-abu
+                    playerNameField.setForeground(Color.GRAY);
                 }
             }
         });
@@ -89,7 +89,7 @@ public class ScreenAwal extends JFrame {
         startGame.setForeground(Color.BLACK); // Tulisan hitam
         startGame.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Border hitam
         startGame.setPreferredSize(new Dimension(250, 40)); // Lebih besar, sesuai dengan ComboBox
-        startGame.setFocusable(false); // Menghilangkan efek focus
+        startGame.setFocusable(false);
 
         // Atur posisi Start Game di baris 1 (setelah input nama)
         gbc.gridx = 0; // Kolom
