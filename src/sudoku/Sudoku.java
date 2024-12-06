@@ -1,12 +1,3 @@
-/**
- * ES234317-Algorithm and Data Structures
- * Semester Ganjil, 2024/2025
- * Group Capstone Project
- * Group #14
- * 1 - 5026231146 - Nicholas Evan Sitanggang
- * 2 - 5026231169 - Daniel Bara Seftino
- * 3 - 5026231182 - Sahilah Amru
- */
 package sudoku;
 
 import javax.swing.*;
@@ -32,6 +23,10 @@ public class Sudoku extends JFrame {
     private final JButton btnPauseTimer = new JButton("Pause Timer");
     private final JButton btnResumeTimer = new JButton("Resume Timer");
     private final JButton btnResetTimer = new JButton("Reset Timer");
+
+    // Variabel untuk menghitung kotak kosong
+    private int remainingCells = SudokuConstants.GRID_SIZE * SudokuConstants.GRID_SIZE;
+    private JLabel remainingCellsLabel = new JLabel("Remaining: " + remainingCells, JLabel.CENTER);  // Label to show remaining cells
 
     // Constructor modified to accept difficulty level and player name
     public Sudoku(int difficultyLevel, String playerName) {
@@ -59,6 +54,10 @@ public class Sudoku extends JFrame {
         timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         topPanel.add(timerLabel);
 
+        // Add the remaining cells label
+        remainingCellsLabel.setFont(new Font("SciFi", Font.PLAIN, 18));
+        topPanel.add(remainingCellsLabel);  // Menambahkan label remaining cells ke topPanel
+
         cp.add(topPanel, BorderLayout.NORTH);  // Panel timer dan level ditempatkan di atas frame
 
         // Panel untuk kontrol timer (Pause, Resume, Reset) dan Restart button (Bottom area)
@@ -85,6 +84,7 @@ public class Sudoku extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                AudioPlayer.stopSound();
                 dispose();
                 AudioPlayer.stopSound();
                 ScreenAwal baru = new ScreenAwal();
@@ -124,7 +124,7 @@ public class Sudoku extends JFrame {
         });
         gameTimer.start();  // Memulai timer saat game dimulai
 
-        // Set the level label according to the difficulty level
+        // Set the level label according to the difficulty
         setLevelLabel(difficultyLevel);
 
         // Revalidate dan repaint frame
@@ -206,8 +206,6 @@ public class Sudoku extends JFrame {
     }
 
     // Method to handle when the game is won
-
-    // Assuming this method is called when the player wins
     private void checkGameWon() {
         if (board.isSolved()) {  // `board.isSolved()` is a placeholder for the actual method to check if the game is won
         }

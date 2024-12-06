@@ -176,6 +176,7 @@ public class GameBoardPanel extends JPanel {
                 AudioPlayer.playSound("menangronde.wav");
                 JOptionPane.showMessageDialog(this, "Congratulations! You've solved the puzzle!",
                         "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
+                AudioPlayer.stopSound();
             }
 
         } else {
@@ -215,6 +216,7 @@ public class GameBoardPanel extends JPanel {
                     AudioPlayer.playSound("menangronde.wav");
                     JOptionPane.showMessageDialog(null, "Congratulations! You've solved the puzzle!",
                             "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
+                    AudioPlayer.stopSound();
                 }
             } else {
                 // Jika input bukan angka yang valid, abaikan

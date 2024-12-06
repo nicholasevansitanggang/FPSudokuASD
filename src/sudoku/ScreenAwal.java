@@ -89,7 +89,7 @@ public class ScreenAwal extends JFrame {
         startGame.setForeground(Color.BLACK); // Tulisan hitam
         startGame.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Border hitam
         startGame.setPreferredSize(new Dimension(250, 40)); // Lebih besar, sesuai dengan ComboBox
-        startGame.setFocusable(false);
+        startGame.setFocusable(false); // Menghilangkan efek focus
 
         // Atur posisi Start Game di baris 1 (setelah input nama)
         gbc.gridx = 0; // Kolom
