@@ -33,8 +33,8 @@ public class Sudoku extends JFrame {
     private final JButton btnResumeTimer = new JButton("Resume Timer");
     private final JButton btnResetTimer = new JButton("Reset Timer");
 
-    // Constructor modified to accept difficulty level
-    public Sudoku(int difficultyLevel) {
+    // Constructor modified to accept difficulty level and player name
+    public Sudoku(int difficultyLevel, String playerName) {
         // Inisialisasi board dengan difficultyLevel
         board = new GameBoardPanel(difficultyLevel);
 
@@ -81,6 +81,17 @@ public class Sudoku extends JFrame {
                 pauseTimer();
             }
         });
+        btnRestartGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dispose();
+                AudioPlayer.stopSound();
+                ScreenAwal baru = new ScreenAwal();
+                baru.setVisible(true);
+                pack();
+            }
+        });
 
         btnResumeTimer.addActionListener(new ActionListener() {
             @Override
@@ -120,10 +131,12 @@ public class Sudoku extends JFrame {
         cp.revalidate();
         cp.repaint();
 
+        // Set the window title with the player's name
+        setTitle(playerName + "'s Sudoku");  // Mengubah title sesuai dengan nama pemain
+
         // Pengaturan ukuran frame
         pack();  // Sesuaikan ukuran window berdasarkan komponen
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Sudoku");
         setSize(600, 600);
         setVisible(true);
     }
@@ -193,40 +206,6 @@ public class Sudoku extends JFrame {
     }
 
     // Method to handle when the game is won
-    private void showWinPopup(int currentLevel) {
-        String message = "Congratulations! You won the game.";
-        String[] options = {"Next Level", "Back to Menu"};
-
-        int option = JOptionPane.showOptionDialog(this,
-                message,
-                "Game Won!",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
-                null,
-                options,
-                options[0]);
-
-        if (option == 0) {
-            // Next Level
-            int nextLevel = currentLevel + 1;
-            if (nextLevel > 10) {
-                nextLevel = 1;  // Loop back to level 1 if max level is reached
-            }
-            dispose();  // Close the current game window
-            Sudoku nextGame = new Sudoku(nextLevel);  // Start the next level
-            JFrame nextGameFrame = new JFrame("Sudoku Game");
-            nextGameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            nextGameFrame.add(nextGame);
-            nextGameFrame.pack();
-            nextGameFrame.setLocationRelativeTo(null);
-            nextGameFrame.setVisible(true);
-        } else if (option == 1) {
-            // Back to Menu
-            dispose();  // Close the current game window
-            ScreenAwal sa = new ScreenAwal();
-            sa.setVisible(true);  // Show the home screen
-        }
-    }
 
     // Assuming this method is called when the player wins
     private void checkGameWon() {

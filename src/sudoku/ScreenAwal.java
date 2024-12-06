@@ -17,6 +17,7 @@ public class ScreenAwal extends JFrame {
     private JButton startGame;
     private JComboBox<String> difficultyComboBox;
     private JLayeredPane layeredPane;
+    private JTextField playerNameField;  // Field untuk input nama pemain
 
     public ScreenAwal() {
         AudioPlayer.playbackSound("game_backsound.wav", 0.65f);
@@ -50,6 +51,37 @@ public class ScreenAwal extends JFrame {
         gbc.insets = new Insets(20, 10, 20, 10); // Menambahkan jarak atas dan bawah untuk elemen-elemen kontrol
         gbc.anchor = GridBagConstraints.CENTER; // Menjaga semua elemen tetap di tengah
 
+        playerNameField = new JTextField("Enter Player Name...");  // Placeholder text
+        playerNameField.setFont(new Font("SciFi", Font.PLAIN, 18)); // Gunakan font SciFi
+        playerNameField.setPreferredSize(new Dimension(250, 40)); // Ukuran lebih besar untuk input nama
+        playerNameField.setForeground(Color.GRAY);  // Warna teks placeholder (abu-abu)
+
+        // Listener untuk menghapus placeholder ketika pengguna mulai mengetik
+        playerNameField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (playerNameField.getText().equals("Enter Player Name...")) {
+                    playerNameField.setText("");
+                    playerNameField.setForeground(Color.BLACK);  // Mengubah warna teks menjadi hitam
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (playerNameField.getText().isEmpty()) {
+                    playerNameField.setText("Enter Player Name...");
+                    playerNameField.setForeground(Color.GRAY);  // Warna teks kembali abu-abu
+                }
+            }
+        });
+
+        // Letakkan input nama di GridBagLayout tanpa label
+        gbc.gridx = 0; // Kolom
+        gbc.gridy = 0; // Baris pertama
+        gbc.gridwidth = 1; // Lebar grid (satu kolom)
+        gbc.insets = new Insets(180, 10, 10, 10); // Menambahkan margin atas
+        controlsPanel.add(playerNameField, gbc);
+
         // Start Game button
         startGame = new JButton("Start Game");
         startGame.setFont(new Font("SciFi", Font.BOLD, 20)); // Gunakan font SciFi dan tebal
@@ -59,13 +91,10 @@ public class ScreenAwal extends JFrame {
         startGame.setPreferredSize(new Dimension(250, 40)); // Lebih besar, sesuai dengan ComboBox
         startGame.setFocusable(false); // Menghilangkan efek focus
 
-        // Atur posisi Start Game di baris 0
+        // Atur posisi Start Game di baris 1 (setelah input nama)
         gbc.gridx = 0; // Kolom
-        gbc.gridy = 0; // Baris
-        gbc.gridwidth = 1; // Lebar grid (satu kolom)
-
-        // Menambahkan margin atas untuk memberikan jarak lebih banyak
-        gbc.insets = new Insets(180, 10, 10, 10); // Margins untuk tombol start (lebih banyak jarak atas)
+        gbc.gridy = 1; // Baris setelah input nama
+        gbc.insets = new Insets(5, 10, 20, 10); // Menambahkan jarak atas untuk tombol start
         controlsPanel.add(startGame, gbc);
 
         // Difficulty ComboBox
@@ -77,13 +106,11 @@ public class ScreenAwal extends JFrame {
         difficultyComboBox.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // Border hitam
         difficultyComboBox.setMaximumSize(new Dimension(250, 40)); // Ukuran lebih besar
 
-        // Atur posisi Difficulty ComboBox di baris 1 (di bawah Start Game)
+        // Atur posisi Difficulty ComboBox di baris 2 (di bawah tombol Start Game)
         gbc.gridx = 0; // Kolom
-        gbc.gridy = 1; // Baris
+        gbc.gridy = 2; // Baris
         gbc.gridwidth = 1; // Lebar grid (satu kolom)
-
-        // Menambahkan margin atas untuk memberikan jarak lebih banyak di atas ComboBox
-        gbc.insets = new Insets(5, 10, 20, 10); // Menambah jarak atas untuk combo box
+        gbc.insets = new Insets(1, 10, 20, 10); // Menambah jarak atas untuk combo box
         controlsPanel.add(difficultyComboBox, gbc);
 
         // Add controls to the center of the layered pane
@@ -100,10 +127,17 @@ public class ScreenAwal extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String difficulty = (String) difficultyComboBox.getSelectedItem();
                 int difficultyLevel = getDifficultyLevel(difficulty);
+                String playerName = playerNameField.getText();  // Ambil nama pemain dari field
+
+                // Periksa apakah nama pemain kosong atau masih berupa placeholder
+                if (playerName.trim().isEmpty() || playerName.equals("Enter Player Name...")) {
+                    JOptionPane.showMessageDialog(null, "Please enter your name!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 setVisible(false);
-                Sudoku gameBoard = new Sudoku(difficultyLevel);
-                JFrame gameFrame = new JFrame("Sudoku Game");
+                Sudoku gameBoard = new Sudoku(difficultyLevel, playerName);  // Pass the player name to the Sudoku game
+                JFrame gameFrame = new JFrame(playerName + "'s Sudoku");  // Mengubah judul window menjadi nama pemain
                 gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 gameFrame.add(gameBoard);
                 gameFrame.pack();
