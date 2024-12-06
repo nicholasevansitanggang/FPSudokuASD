@@ -11,7 +11,6 @@ public class Sudoku extends JFrame {
     // Private variables
     private final GameBoardPanel board;
     private final JButton btnRestartGame = new JButton("Back to Menu");
-    private final JLabel timerLabel = new JLabel("Time: 0 seconds", JLabel.CENTER);  // Label to show timer
     private final JLabel levelLabel = new JLabel("Level: Easy", JLabel.CENTER);  // Label to show level
     private final Timer gameTimer;
     private int elapsedTime = 0;  // Elapsed time in seconds
@@ -39,10 +38,9 @@ public class Sudoku extends JFrame {
         topPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         // Set up timer label (tampilkan waktu) dan level label
-        timerLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         levelLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
-        topPanel.add(timerLabel);
+
         topPanel.add(levelLabel);  // Menambahkan level label ke topPanel
         cp.add(topPanel, BorderLayout.NORTH);  // Panel timer dan level ditempatkan di atas frame
 
@@ -103,7 +101,6 @@ public class Sudoku extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (!isPaused) {
                     elapsedTime++;
-                    timerLabel.setText("Time: " + elapsedTime + " seconds");
                 }
             }
         });
@@ -181,7 +178,6 @@ public class Sudoku extends JFrame {
     // Method to reset the timer
     public void resetTimer() {
         elapsedTime = 0;
-        timerLabel.setText("Time: 0 seconds");
         isPaused = false;
         btnPauseTimer.setEnabled(true);
         btnResumeTimer.setEnabled(false);

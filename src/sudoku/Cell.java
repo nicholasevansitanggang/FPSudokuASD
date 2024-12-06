@@ -13,10 +13,10 @@ public class Cell extends JTextField {
     //  to be chosen based on CellStatus
     public static final Color BG_GIVEN = new Color(240, 240, 240); // RGB
     public static final Color FG_GIVEN = Color.BLACK;
-    public static final Color FG_NOT_GIVEN = Color.GRAY;
-    public static final Color BG_TO_GUESS  = Color.YELLOW;
-    public static final Color BG_CORRECT_GUESS = new Color(109, 232, 109);
-    public static final Color BG_WRONG_GUESS   = new Color(215, 56, 56);
+    public static final Color FG_NOT_GIVEN = new Color(241, 233, 221);
+    public static final Color BG_TO_GUESS  = new Color(218, 200, 155);
+    public static final Color BG_CORRECT_GUESS = new Color(130, 208, 130);
+    public static final Color BG_WRONG_GUESS   = new Color(194, 47, 47);
     public static final Font FONT_NUMBERS = new Font("OCR A Extended", Font.PLAIN, 28);
 
     // Define properties (package-visible)
