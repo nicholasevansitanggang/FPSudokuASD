@@ -50,12 +50,12 @@ public class Sudoku extends JFrame {
         topPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         // Set up timer label (tampilkan waktu) dan level label
-        levelLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+        levelLabel.setFont(new Font("SciFi", Font.PLAIN, 18));
         topPanel.add(levelLabel);  // Menambahkan level label ke topPanel
 
         // Timer label setup
         timerLabel = new JLabel(String.format("Time: %02d:%02d", minutes, seconds), SwingConstants.CENTER);
-        timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        timerLabel.setFont(new Font("SciFi", Font.BOLD, 18));
         timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         topPanel.add(timerLabel);
 

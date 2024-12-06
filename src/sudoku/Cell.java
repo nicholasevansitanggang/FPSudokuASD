@@ -26,7 +26,6 @@ public class Cell extends JTextField {
     public static final Color BG_TO_GUESS  = new Color(218, 200, 155);
     public static final Color BG_CORRECT_GUESS = new Color(130, 208, 130);
     public static final Color BG_WRONG_GUESS   = new Color(194, 47, 47);
-    public static final Font FONT_NUMBERS = new Font("OCR A Extended", Font.PLAIN, 28);
 
     // Define properties (package-visible)
     /** The row and column number [0-8] of this cell */
@@ -44,7 +43,7 @@ public class Cell extends JTextField {
         this.col = col;
         // Inherited from JTextField: Beautify all the cells once for all
         this.isEditable = true;  // Assume the cell is editable by default
-        this.setFont(new Font("Arial", Font.BOLD, 24));
+        this.setFont(new Font("SciFi", Font.BOLD, 24));
         this.setEditable(true);
 
     }

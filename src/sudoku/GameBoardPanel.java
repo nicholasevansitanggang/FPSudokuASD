@@ -1,12 +1,3 @@
-/**
- * ES234317-Algorithm and Data Structures
- * Semester Ganjil, 2024/2025
- * Group Capstone Project
- * Group #14
- * 1 - 5026231146 - Nicholas Evan Sitanggang
- * 2 - 5026231169 - Daniel Bara Seftino
- * 3 - 5026231182 - Sahilah Amru
- */
 package sudoku;
 
 import java.awt.*;
@@ -27,12 +18,31 @@ public class GameBoardPanel extends JPanel {
     private int minutes = 0;
     private Timer timer;
 
+    // Variabel untuk jumlah hint yang tersisa
+    private int remainingHints = 3;
+
     public GameBoardPanel(int difficultyLevel) {
         super.setLayout(new BorderLayout());
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setOpaque(false);
+
+        // Menambahkan tombol Hint
+        JButton hintButton = new JButton("Hint (" + remainingHints + " left)");
+        hintButton.setFont(new Font("SciFi", Font.BOLD, 16));
+        hintButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                giveHint(hintButton);  // Pass the hintButton to update the label
+            }
+        });
+
+        // Panel untuk tombol hint dan timer
+        JPanel hintPanel = new JPanel();
+        hintPanel.setLayout(new BorderLayout());
+        hintPanel.add(hintButton, BorderLayout.CENTER);
+        topPanel.add(hintPanel);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -55,7 +65,7 @@ public class GameBoardPanel extends JPanel {
                     cells[row][col].setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
                 }
 
-                cells[row][col].setFont(new Font("Arial", Font.BOLD, 24));
+                cells[row][col].setFont(new Font("SciFi", Font.BOLD, 24));
                 cells[row][col].setHorizontalAlignment(SwingConstants.CENTER);
                 gridPanel.add(cells[row][col]);
             }
@@ -120,6 +130,50 @@ public class GameBoardPanel extends JPanel {
         return true;
     }
 
+    // Fungsi untuk memberikan hint
+    public void giveHint(JButton hintButton) {
+        if (remainingHints > 0) {
+            // Cari sel kosong yang belum terisi
+            boolean hintGiven = false;
+            for (int row = 0; row < SudokuConstants.GRID_SIZE; row++) {
+                for (int col = 0; col < SudokuConstants.GRID_SIZE; col++) {
+                    if (cells[row][col].getText().isEmpty() && !puzzle.isGiven[row][col]) {
+                        // Isi sel dengan angka yang benar dari puzzle
+                        cells[row][col].setText(String.valueOf(puzzle.numbers[row][col]));
+                        cells[row][col].status = CellStatus.CORRECT_GUESS;
+                        cells[row][col].paint();
+                        remainingHints--;
+                        hintGiven = true;
+
+                        // Suara hint
+                        AudioPlayer.playSound("hint_sound.wav");  // Ganti dengan suara hint yang sesuai
+
+                        break;
+                    }
+                }
+                if (hintGiven) break;
+            }
+
+            // Update tombol dengan jumlah hint yang tersisa
+            hintButton.setText("Hint (" + remainingHints + " left)");
+
+            // Jika hint habis
+            if (remainingHints == 0) {
+                hintButton.setEnabled(false);  // Menonaktifkan tombol hint jika habis
+            }
+
+            // Periksa jika game sudah selesai setelah memberikan hint
+            if (isSolved()) {
+                AudioPlayer.playSound("menangronde.wav");
+                JOptionPane.showMessageDialog(this, "Congratulations! You've solved the puzzle!",
+                        "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(this, "No more hints left!", "Hint Limit Reached", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
     // KeyListener untuk memproses input langsung
     private class CellInputListener implements KeyListener {
         @Override
@@ -131,11 +185,7 @@ public class GameBoardPanel extends JPanel {
         public void keyReleased(KeyEvent e) {
             Cell sourceCell = (Cell) e.getSource();
             char keyChar = e.getKeyChar();
-//
-//            if (text.isEmpty() || text.equals("0")) {
-//                JOptionPane.showMessageDialog(null, "Please enter a number between 1 and 9!", "Invalid Input", JOptionPane.ERROR_MESSAGE);
-//                return;
-//            }
+
             // Pastikan hanya angka 1-9 yang bisa dimasukkan
             if (Character.isDigit(keyChar) && keyChar != '0') {
                 int numberIn = Character.getNumericValue(keyChar);
@@ -169,4 +219,3 @@ public class GameBoardPanel extends JPanel {
         }
     }
 }
-
