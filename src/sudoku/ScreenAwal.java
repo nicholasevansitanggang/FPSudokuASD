@@ -6,13 +6,11 @@ import java.awt.event.*;
 
 public class ScreenAwal extends JFrame {
     private JButton startGame;
-    private JLabel welcomeLabel;
-    private JPanel panel;
     private JComboBox<String> difficultyComboBox;
     private JLayeredPane layeredPane;
 
     public ScreenAwal() {
-        AudioPlayer.playbackSound("game_backsound.wav");
+        AudioPlayer.playbackSound("game_backsound.wav", 0.65f);
         setTitle("Sudoku Game");
 
         // Initialize the layered pane

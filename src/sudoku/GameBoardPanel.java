@@ -1,129 +1,168 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package sudoku;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 public class GameBoardPanel extends JPanel {
     private static final long serialVersionUID = 1L;
+
     public static final int CELL_SIZE = 70;
-    public static final int BOARD_WIDTH = 630;
-    public static final int BOARD_HEIGHT = 630;
-    private Cell[][] cells = new Cell[9][9];
+    private int BOARD_WIDTH;
+    private int BOARD_HEIGHT;
+
+    private Cell[][] cells = new Cell[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
     private Puzzle puzzle = new Puzzle();
-    private JLabel timerLabel;
-    private int seconds = 0;
-    private int minutes = 0;
-    private Timer timer;
+
 
     public GameBoardPanel(int difficultyLevel) {
-        super.setLayout(new BorderLayout());
-        this.timerLabel = new JLabel(String.format("%02d:%02d", this.minutes, this.seconds), 0);
-        this.timerLabel.setFont(new Font("Arial", 1, 24));
-        this.timerLabel.setForeground(Color.BLACK);
-        JPanel gridPanel = new JPanel(new GridLayout(9, 9, 0, 0));
+        setLayout(new BorderLayout());
 
-        int row;
-        int col;
-        for(row = 0; row < 9; ++row) {
-            for(col = 0; col < 9; ++col) {
-                this.cells[row][col] = new Cell(row, col);
-                int top = 1;
-                int left = 1;
-                int bottom = 1;
-                int right = 1;
-                if (row % 3 == 0) {
-                    top = 2;
-                }
+        // Set initial board width and height
+        BOARD_WIDTH = CELL_SIZE * SudokuConstants.GRID_SIZE;
+        BOARD_HEIGHT = CELL_SIZE * SudokuConstants.GRID_SIZE;
 
-                if (col % 3 == 0) {
-                    left = 2;
-                }
+        // Create a JLayeredPane for background and grid layers
+        JLayeredPane layeredPane = new JLayeredPane();
 
-                if ((row + 1) % 3 == 0) {
-                    bottom = 2;
-                }
+        // Create BackgroundPanel and set its size to fill the whole board area
+        BackgroundPanel backgroundPanel = new BackgroundPanel("/screenawal.gif");
+        backgroundPanel.setBounds(0, 0, BOARD_WIDTH, BOARD_HEIGHT); // Set background to cover the whole board
+        layeredPane.add(backgroundPanel, JLayeredPane.DEFAULT_LAYER);
 
-                if ((col + 1) % 3 == 0) {
-                    right = 2;
-                }
+        // Panel for Level and Timer
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setOpaque(false); // Make this transparent to see the background
 
-                if (top != 2 && left != 2 && bottom != 2 && right != 2) {
-                    this.cells[row][col].setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
+
+        // Add Level and Timer to the top panel
+        topPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacer
+
+        // Add top panel to the North part of the layout
+        topPanel.setBounds(0, 0, BOARD_WIDTH, 50);  // Set position for timer
+        layeredPane.add(topPanel, JLayeredPane.PALETTE_LAYER);
+
+        // Panel for Sudoku Grid
+        JPanel gridPanel = new JPanel(new GridLayout(SudokuConstants.GRID_SIZE, SudokuConstants.GRID_SIZE, 0, 0));
+
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                cells[row][col] = new Cell(row, col);
+
+                int top = 1, left = 1, bottom = 1, right = 1;
+
+                // Thicker borders for the 3x3 subgrids
+                if (row % SudokuConstants.SUBGRID_SIZE == 0) top = 2;
+                if (col % SudokuConstants.SUBGRID_SIZE == 0) left = 2;
+                if ((row + 1) % SudokuConstants.SUBGRID_SIZE == 0) bottom = 2;
+                if ((col + 1) % SudokuConstants.SUBGRID_SIZE == 0) right = 2;
+
+                if (top == 2 || left == 2 || bottom == 2 || right == 2) {
+                    cells[row][col].setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, new Color(45, 45, 45))); // Thicker borders
                 } else {
-                    this.cells[row][col].setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, new Color(45, 45, 45)));
+                    cells[row][col].setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK)); // Thin borders
                 }
 
-                this.cells[row][col].setFont(new Font("Arial", 1, 24));
-                this.cells[row][col].setHorizontalAlignment(0);
-                gridPanel.add(this.cells[row][col]);
+                cells[row][col].setFont(new Font("Arial", Font.BOLD, 24)); // Larger font
+                cells[row][col].setHorizontalAlignment(SwingConstants.CENTER);
+                gridPanel.add(cells[row][col]);
             }
         }
 
-        this.setBorder(BorderFactory.createLineBorder(new Color(204, 204, 204), 2));
-        this.add(gridPanel, "Center");
-        this.puzzle.newPuzzle(difficultyLevel);
+        setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
-        for(row = 0; row < 9; ++row) {
-            for(col = 0; col < 9; ++col) {
-                this.cells[row][col].newGame(this.puzzle.numbers[row][col], this.puzzle.isGiven[row][col]);
+        // Center the gridPanel within the layeredPane
+        gridPanel.setBounds((BOARD_WIDTH - gridPanel.getPreferredSize().width) / 2,
+                (BOARD_HEIGHT - gridPanel.getPreferredSize().height - 50) / 2, // Leave space for timer
+                BOARD_WIDTH,
+                BOARD_HEIGHT - 50); // Leave space for the timer
+        layeredPane.add(gridPanel, JLayeredPane.MODAL_LAYER);
+
+        puzzle.newPuzzle(difficultyLevel);
+
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                cells[row][col].newGame(puzzle.numbers[row][col], puzzle.isGiven[row][col]);
             }
         }
 
-        this.timer = new Timer(1000, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ++GameBoardPanel.this.seconds;
-                if (GameBoardPanel.this.seconds == 60) {
-                    GameBoardPanel.this.seconds = 0;
-                    ++GameBoardPanel.this.minutes;
+        CellInputListener listener = new CellInputListener();
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; row++) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; col++) {
+                if (cells[row][col].isEditable()) {
+                    cells[row][col].addActionListener(listener);
                 }
-
-                GameBoardPanel.this.timerLabel.setText(String.format("%02d:%02d", GameBoardPanel.this.minutes, GameBoardPanel.this.seconds));
             }
-        });
-        this.timer.start();
-        JPanel timerPanel = new JPanel();
-        timerPanel.setLayout(new FlowLayout(1));
-        timerPanel.setOpaque(false);
-        timerPanel.add(this.timerLabel);
-        this.add(timerPanel, "North");
-        this.setPreferredSize(new Dimension(630, 630));
+        }
+
+        // Timer Initialization
+
+
+        // Add the JLayeredPane to the main panel
+        add(layeredPane, BorderLayout.CENTER);
+
+        setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
+    }
+
+    @Override
+    public void setSize(Dimension d) {
+        super.setSize(d);
+        BOARD_WIDTH = d.width;
+        BOARD_HEIGHT = d.height;
+        revalidate();
+        repaint();
     }
 
     public void newGame(int difficultyLevel) {
-        this.puzzle.newPuzzle(difficultyLevel);
+        AudioPlayer.playbackSound("backSound.wav", 0.65f);
+        puzzle.newPuzzle(difficultyLevel);
 
-        for(int row = 0; row < 9; ++row) {
-            for(int col = 0; col < 9; ++col) {
-                this.cells[row][col].newGame(this.puzzle.numbers[row][col], this.puzzle.isGiven[row][col]);
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                cells[row][col].newGame(puzzle.numbers[row][col], puzzle.isGiven[row][col]);
             }
         }
-
     }
 
     public boolean isSolved() {
-        for(int row = 0; row < 9; ++row) {
-            for(int col = 0; col < 9; ++col) {
-                if (this.cells[row][col].status == CellStatus.TO_GUESS || this.cells[row][col].status == CellStatus.WRONG_GUESS) {
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                if (cells[row][col].status == CellStatus.TO_GUESS || cells[row][col].status == CellStatus.WRONG_GUESS) {
                     return false;
                 }
             }
         }
-
         return true;
+    }
+
+    private class CellInputListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Cell sourceCell = (Cell) e.getSource();
+            String text = sourceCell.getText();
+
+            if (text.isEmpty() || text.equals("0")) {
+                JOptionPane.showMessageDialog(null, "Please enter a number between 1 and 9!", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int numberIn = Integer.parseInt(sourceCell.getText());
+
+            if (numberIn == sourceCell.number) {
+                sourceCell.status = CellStatus.CORRECT_GUESS;
+                AudioPlayer.playSound("tuting.wav");
+            } else {
+                sourceCell.status = CellStatus.WRONG_GUESS;
+                AudioPlayer.playSound2("inputsalah.wav");
+            }
+            sourceCell.paint();
+
+            if (isSolved()) {
+                AudioPlayer.playSound("menangronde.wav");
+                JOptionPane.showMessageDialog(null, "Congratulations! You've solved the puzzle!",
+                        "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
     }
 }

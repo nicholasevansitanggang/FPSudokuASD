@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class Sudoku extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -11,10 +13,13 @@ public class Sudoku extends JFrame {
     // Private variables
     private final GameBoardPanel board;
     private final JButton btnRestartGame = new JButton("Back to Menu");
-    private final JLabel levelLabel = new JLabel("Level: Easy", JLabel.CENTER);  // Label to show level
+    private final JLabel levelLabel = new JLabel("Level: ", JLabel.CENTER);  // Label to show level
     private final Timer gameTimer;
     private int elapsedTime = 0;  // Elapsed time in seconds
     private boolean isPaused = false;  // To track if timer is paused
+    private JLabel timerLabel;
+    private int seconds = 0;
+    private int minutes = 0;
 
     // Buttons for controlling the timer
     private final JButton btnPauseTimer = new JButton("Pause Timer");
@@ -30,8 +35,17 @@ public class Sudoku extends JFrame {
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());  // Menggunakan BorderLayout untuk menempatkan komponen
 
+        // Create and set the background panel
+        BackgroundPanel backgroundPanel = new BackgroundPanel();
+        cp.add(backgroundPanel, BorderLayout.CENTER);
+
+        // Set up the layered pane for overlaying components
+        JLayeredPane layeredPane = new JLayeredPane();
+        backgroundPanel.setLayout(new BorderLayout());
+        layeredPane.setLayout(new BorderLayout());
+
         // Add the game board to the center
-        cp.add(board, BorderLayout.CENTER);
+        layeredPane.add(board, BorderLayout.CENTER);
 
         // Panel untuk Timer dan Level (Upper area)
         JPanel topPanel = new JPanel();
@@ -39,10 +53,15 @@ public class Sudoku extends JFrame {
 
         // Set up timer label (tampilkan waktu) dan level label
         levelLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-
-
         topPanel.add(levelLabel);  // Menambahkan level label ke topPanel
-        cp.add(topPanel, BorderLayout.NORTH);  // Panel timer dan level ditempatkan di atas frame
+
+        // Timer label setup
+        timerLabel = new JLabel(String.format("Time: %02d:%02d", minutes, seconds), SwingConstants.CENTER);
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        topPanel.add(timerLabel);
+
+        layeredPane.add(topPanel, BorderLayout.NORTH);  // Panel timer dan level ditempatkan di atas frame
 
         // Panel untuk kontrol timer (Pause, Resume, Reset) dan Restart button (Bottom area)
         JPanel bottomPanel = new JPanel();
@@ -54,12 +73,16 @@ public class Sudoku extends JFrame {
         bottomPanel.add(btnResetTimer);   // Menambahkan tombol Reset
         bottomPanel.add(btnRestartGame);  // Menambahkan tombol Restart Game
 
-        cp.add(bottomPanel, BorderLayout.SOUTH);  // Menambahkan panel kontrol timer dan tombol restart ke SOUTH
+        layeredPane.add(bottomPanel, BorderLayout.SOUTH);  // Menambahkan panel kontrol timer dan tombol restart ke SOUTH
+
+        // Add the layered pane to the background panel
+        backgroundPanel.add(layeredPane, BorderLayout.CENTER);
 
         // Set up button actions for controlling the timer
         btnPauseTimer.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 pauseTimer();
             }
         });
@@ -78,29 +101,18 @@ public class Sudoku extends JFrame {
             }
         });
 
-        // Tombol restart game yang memperbaiki freeze
-        btnRestartGame.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Hentikan timer sebelum memulai game ulang
-                gameTimer.stop();
-                dispose();
-                AudioPlayer.stopSound();
-                ScreenAwal sa = new ScreenAwal();
-                sa.setVisible(true);
-
-                // Reset timer dan mulai timer dari 0
-                resetTimer();  // Reset timer
-                gameTimer.start();  // Mulai kembali timer setelah game dimulai ulang
-            }
-        });
-
         // Inisialisasi dan mulai timer
         gameTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!isPaused) {
-                    elapsedTime++;
+                    seconds++;
+                    if (seconds == 60) {
+                        seconds = 0;
+                        minutes++;
+                    }
+                    // Update Timer Label
+                    timerLabel.setText(String.format("Time: %02d:%02d", minutes, seconds));
                 }
             }
         });
@@ -177,10 +189,12 @@ public class Sudoku extends JFrame {
 
     // Method to reset the timer
     public void resetTimer() {
-        elapsedTime = 0;
+        seconds = 0;
+        minutes = 0;
         isPaused = false;
         btnPauseTimer.setEnabled(true);
         btnResumeTimer.setEnabled(false);
+        timerLabel.setText(String.format("Time: %02d:%02d", minutes, seconds)); // Reset the timer label
     }
 
     // Method to handle when the game is won
@@ -225,4 +239,25 @@ public class Sudoku extends JFrame {
         }
     }
 
+    // BackgroundPanel class to paint background image
+    class BackgroundPanel extends JPanel {
+        private Image backgroundImage;
+
+        public BackgroundPanel() {
+            try {
+                // Load background image (adjust path accordingly)
+                backgroundImage = ImageIO.read(getClass().getResource("/screenawal.gif"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (backgroundImage != null) {
+                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            }
+        }
+    }
 }

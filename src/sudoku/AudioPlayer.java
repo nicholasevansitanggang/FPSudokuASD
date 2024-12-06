@@ -26,17 +26,39 @@ public class AudioPlayer {
         }
     }
 
-    // Method untuk memutar suara yang berulang terus menerus
-    public static void playbackSound(String soundFile) {
+    public static void playbackSound(String soundFile, float volume) {
         try {
             InputStream audioLink = AudioPlayer.class.getResourceAsStream("/" + soundFile);
             AudioInputStream audio = AudioSystem.getAudioInputStream(audioLink);
-            clip = AudioSystem.getClip();  // Simpan clip yang sedang diputar
+
+            clip = AudioSystem.getClip();
             clip.open(audio);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);  // Suara berulang terus menerus
+
+            // Set volume
+            setVolume(volume);
+
+            // Play the sound continuously
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
             clip.start();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // Method to set the volume level
+    private static void setVolume(float volume) {
+        if (clip != null) {
+            if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+
+                // Get the current volume range
+                float minGain = volumeControl.getMinimum();
+                float maxGain = volumeControl.getMaximum();
+
+                // Scale the volume value
+                float volumeValue = minGain + (maxGain - minGain) * volume;
+                volumeControl.setValue(volumeValue);
+            }
         }
     }
 
